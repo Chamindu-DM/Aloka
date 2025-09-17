@@ -6,7 +6,10 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { error } from "console";
 
-const prisma = new PrismaClient();
+// Use standard Prisma client for regular PostgreSQL connection
+const prisma = new PrismaClient({
+  log: ['query', 'error', 'warn'],
+});
 
 export async function authenticateUser(formData: FormData){
     const email = formData.get('email') as string;
@@ -68,30 +71,39 @@ export async function registerUser(formData : FormData) {
 
     try{
         //check if user already exists
+        console.log('Checking if user exists:', email);
         const existingUser = await prisma.user.findUnique({
-            where: {email},
+            where: { email }
         });
 
-        if (existingUser){
-            return{error: 'User with this email already exists'};
+        if (existingUser) {
+            console.log('User already exists with this email');
+            return { error: 'User with this email already exists' };
         }
 
-        //hash password
+        console.log('Hashing password...');
         const passwordHash = await bcrypt.hash(password, 10);
 
-        //create user
+        console.log('Creating new user...');
         const user = await prisma.user.create({
-            data:{
+            data: {
                 email,
                 passwordHash,
                 name,
             },
         });
-
-        return { success: true};
-    } catch (error){
+        
+        console.log('User created successfully:', user.id);
+        return { success: true };
+    } catch (error: any) {
         console.error('Registration error:', error);
-        return { error: 'Failed to register user'};
+        // Return more specific error message for debugging
+        const errorMessage = error.message || 'Failed to register user';
+        const errorCode = error.code || 'UNKNOWN';
+        return { 
+            error: `Registration failed: ${errorMessage} (Code: ${errorCode})`,
+            details: error
+        };
     }
 }
 
