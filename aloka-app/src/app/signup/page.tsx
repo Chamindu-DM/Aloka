@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { registerUser } from '@/lib/actions';
 
 export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
@@ -22,25 +23,34 @@ export default function SignUp() {
     }
 
     try {
-      // Replace with your actual registration API call
-      // const result = await registerUser(formData);
-      // if (result.error) {
-      //   setError(result.error);
-      // } else {
-      //   setSuccess(true);
-      //   // Redirect after successful signup
-      //   setTimeout(() => {
-      //     window.location.href = '/signin';
-      //   }, 2000);
-      // }
+      console.log('Submitting registration form...', { 
+        email: formData.get('email'),
+        name: formData.get('name'),
+        passwordLength: password?.length
+      });
       
-      // For demo purposes:
-      setSuccess(true);
-      setTimeout(() => {
-        window.location.href = '/signin';
-      }, 2000);
+      // Call server action to register user
+      const result = await registerUser(formData);
+      console.log('Registration result:', result);
+      
+      if (result.error) {
+        console.error('Server returned error:', result.error);
+        setError(result.error);
+      } else {
+        setSuccess(true);
+        console.log('Registration successful!');
+        // Redirect after successful signup
+        setTimeout(() => {
+          window.location.href = '/signin';
+        }, 2000);
+      }
     } catch (err) {
-      setError('Failed to register. Please try again.');
+      console.error('Registration error:', err);
+      // Show detailed error in UI for debugging
+      const errorMessage = err instanceof Error 
+        ? `${err.name}: ${err.message}` 
+        : 'Unknown error occurred';
+      setError(`Failed to register: ${errorMessage}`);
     }
   };
 

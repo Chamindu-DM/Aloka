@@ -1,7 +1,10 @@
 import { cookies } from 'next/headers';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// Use standard Prisma client for regular PostgreSQL connection
+const prisma = new PrismaClient({
+  log: ['query', 'error', 'warn'],
+});
 
 export async function getSession() {
   const cookieStore = await cookies();
