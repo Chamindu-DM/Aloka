@@ -1,5 +1,11 @@
 // Standardized response function
-import {updateUserService} from "../models/userModel.js";
+import {
+    createUserService,
+    getAllUsersService,
+    getUserByIdService,
+    updateUserService,
+    deleteUserService
+} from "../models/userModel.js";
 import e from "express";
 
 const handleResponse = (res, status, message, data) => {
