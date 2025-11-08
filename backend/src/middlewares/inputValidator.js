@@ -2,8 +2,12 @@ import  Joi from "joi";
 import router from "../routes/userRoutes.js";
 
 const userScheme = Joi.object({
-    name: Joi.string().min(3).required(),
+    firstName: Joi.string().min(2).required(),
+    lastName: Joi.string().min(2).required(),
     email: Joi.string().email().required(),
+    phone: Joi.string().min(10).optional(),
+    password: Joi.string().min(8).required(),
+    accountType: Joi.string().valid('donor', 'campaigner', 'both').optional(),
 });
 
 const validateUser= (req, res, next) => {

@@ -6,6 +6,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Lightbulb, Facebook, Mail } from "lucide-react";
+import { useState } from "react";
 
 interface SignUpProps {
   onSignInClick?: () => void;
@@ -13,10 +14,52 @@ interface SignUpProps {
 }
 
 export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [accountType, setAccountType] = useState("donor");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle sign up logic here
-    console.log("Sign up submitted");
+
+    const formData = new FormData(e.currentTarget);
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const password = formData.get("password") as string;
+
+    console.log("Submitting signup with:", { firstName, lastName, email, phone, accountType });
+
+    try {
+      const res = await fetch("http://localhost:5001/api/user/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          firstName, 
+          lastName, 
+          email,
+          phone, 
+          password, 
+          accountType,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || data.message || "Sign up failed");
+      }
+
+      console.log("Sign up successful:", data);
+      alert("Account created successfully! Please sign in.");
+      // Redirect to sign in
+      if (onSignInClick) {
+        onSignInClick();
+      }
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      alert(err.message || "Sign up failed. Please try again.");
+    }
   };
 
   return (
@@ -79,6 +122,7 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
+                    name="firstName"
                     placeholder="Priya"
                     required
                     className="border-gray-300 focus:border-orange-500 focus:ring-orange-500"
@@ -88,6 +132,7 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
+                    name="lastName"
                     placeholder="Silva"
                     required
                     className="border-gray-300 focus:border-orange-500 focus:ring-orange-500"
@@ -99,6 +144,7 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="name@example.com"
                   required
@@ -110,6 +156,7 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
                 <Label htmlFor="phone">Phone Number</Label>
                 <Input
                   id="phone"
+                  name="phone"
                   type="tel"
                   placeholder="+94 XX XXX XXXX"
                   required
@@ -121,19 +168,20 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   placeholder="Create a strong password"
                   required
                   className="border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                 />
-                <p className="text-gray-500">
+                <p className="text-sm text-gray-500">
                   Must be at least 8 characters
                 </p>
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="accountType">I want to</Label>
-                <Select defaultValue="donor">
+                <Select value={accountType} onValueChange={setAccountType}>
                   <SelectTrigger className="border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                     <SelectValue placeholder="Select account type" />
                   </SelectTrigger>
