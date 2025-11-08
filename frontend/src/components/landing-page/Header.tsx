@@ -1,7 +1,11 @@
 import { Button } from "../ui/button";
 import { Lightbulb } from "lucide-react";
 
-export function Header() {
+interface HeaderProps {
+  onSignInClick?: () => void;
+}
+
+export function Header({ onSignInClick }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -22,10 +26,17 @@ export function Header() {
         </nav>
         
         <div className="flex items-center gap-4">
-          <Button variant="ghost" className="hidden sm:inline-flex text-gray-600 hover:text-orange-500">
+          <Button 
+            variant="ghost" 
+            className="hidden sm:inline-flex text-gray-600 hover:text-orange-500"
+            onClick={onSignInClick}
+          >
             Sign In
           </Button>
-          <Button className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg">
+          <Button 
+            className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg"
+            onClick={onSignInClick}
+          >
             Start a Campaign
           </Button>
         </div>

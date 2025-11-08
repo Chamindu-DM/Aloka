@@ -2,7 +2,11 @@ import { Button } from "../ui/button";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { ArrowRight } from "lucide-react";
 
-export function Hero() {
+interface HeroProps {
+  onStartCampaignClick?: () => void;
+}
+
+export function Hero({ onStartCampaignClick }: HeroProps) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-orange-50 to-white">
       <div className="container mx-auto px-4 py-20 lg:py-32">
@@ -24,7 +28,10 @@ export function Hero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg">
+              <Button 
+                className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg"
+                onClick={onStartCampaignClick}
+              >
                 Start a Campaign
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
