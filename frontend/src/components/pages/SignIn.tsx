@@ -12,10 +12,43 @@ interface SignInProps {
 }
 
 export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle sign in logic here
-    console.log("Sign in submitted");
+    
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    console.log("Attempting sign in for:", email);
+
+    try {
+      const res = await fetch("http://localhost:5001/api/user/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || data.message || "Invalid email or password");
+      }
+
+      console.log("Sign in successful:", data);
+      alert("Login successful!");
+      // Handle successful sign in (e.g., redirect, store token, etc.)
+      if (data.data && data.data.id) {
+        localStorage.setItem("userId", data.data.id.toString());
+        localStorage.setItem("userEmail", data.data.email);
+      }
+      // For now, just show success. In production, you'd redirect to dashboard
+      // window.location.href = "/dashboard";
+    } catch (err: any) {
+      console.error("Sign in error:", err);
+      alert(err.message || "Login failed. Please check your email and password.");
+    }
   };
 
   return (
@@ -51,6 +84,7 @@ export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="name@example.com"
                   required
@@ -63,13 +97,14 @@ export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
                   <Label htmlFor="password">Password</Label>
                   <button
                     type="button"
-                    className="text-orange-600 hover:text-orange-700 transition-colors"
+                    className="text-sm text-orange-600 hover:text-orange-700 transition-colors"
                   >
                     Forgot password?
                   </button>
                 </div>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   placeholder="Enter your password"
                   required
