@@ -1,0 +1,141 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'production'], description: 'Deployment environment')
+        string(name: 'VERSION_TAG', defaultValue: '', description: 'Optional: Specific version tag (e.g., v1.0.0)')
+    }
+    
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKERHUB_REPO = 'chamindudm'
+        BACKEND_IMAGE = "${DOCKERHUB_REPO}/aloka-backend"
+        FRONTEND_IMAGE = "${DOCKERHUB_REPO}/aloka-frontend"
+        VERSION = "${params.VERSION_TAG ?: 'build-' + env.BUILD_NUMBER}"
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code...'
+                checkout scm
+            }
+        }
+        
+        stage('Build Images') {
+            parallel {
+                stage('Build Backend') {
+                    steps {
+                        echo "Building backend image for ${params.DEPLOY_ENV}..."
+                        script {
+                            dir('backend') {
+                                sh """
+                                    docker build -t ${BACKEND_IMAGE}:${VERSION} .
+                                    docker tag ${BACKEND_IMAGE}:${VERSION} ${BACKEND_IMAGE}:${params.DEPLOY_ENV}
+                                """
+                                if (params.DEPLOY_ENV == 'production') {
+                                    sh "docker tag ${BACKEND_IMAGE}:${VERSION} ${BACKEND_IMAGE}:latest"
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                stage('Build Frontend') {
+                    steps {
+                        echo "Building frontend image for ${params.DEPLOY_ENV}..."
+                        script {
+                            dir('frontend') {
+                                sh """
+                                    docker build -t ${FRONTEND_IMAGE}:${VERSION} .
+                                    docker tag ${FRONTEND_IMAGE}:${VERSION} ${FRONTEND_IMAGE}:${params.DEPLOY_ENV}
+                                """
+                                if (params.DEPLOY_ENV == 'production') {
+                                    sh "docker tag ${FRONTEND_IMAGE}:${VERSION} ${FRONTEND_IMAGE}:latest"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Test Images') {
+            steps {
+                echo 'Running tests...'
+                script {
+                    sh """
+                        docker run --rm ${BACKEND_IMAGE}:${VERSION} npm test || true
+                        docker run --rm ${FRONTEND_IMAGE}:${VERSION} npm test || true
+                    """
+                }
+            }
+        }
+        
+        stage('Login to Docker Hub') {
+            steps {
+                echo 'Logging into Docker Hub...'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        
+        stage('Push Images') {
+            when {
+                expression { params.DEPLOY_ENV == 'production' || params.DEPLOY_ENV == 'staging' }
+            }
+            steps {
+                echo 'Pushing images to Docker Hub...'
+                sh """
+                    docker push ${BACKEND_IMAGE}:${VERSION}
+                    docker push ${BACKEND_IMAGE}:${params.DEPLOY_ENV}
+                    docker push ${FRONTEND_IMAGE}:${VERSION}
+                    docker push ${FRONTEND_IMAGE}:${params.DEPLOY_ENV}
+                """
+                script {
+                    if (params.DEPLOY_ENV == 'production') {
+                        sh """
+                            docker push ${BACKEND_IMAGE}:latest
+                            docker push ${FRONTEND_IMAGE}:latest
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                expression { params.DEPLOY_ENV != 'dev' }
+            }
+            steps {
+                echo "Deploying to ${params.DEPLOY_ENV}..."
+                // Add your deployment commands here
+                // Example: SSH to server and run docker-compose
+            }
+        }
+        
+        stage('Cleanup') {
+            steps {
+                echo 'Cleaning up...'
+                sh """
+                    docker system prune -f
+                """
+            }
+        }
+    }
+    
+    post {
+        always {
+            sh 'docker logout'
+        }
+        success {
+            echo '✅ Pipeline completed successfully!'
+            echo "Environment: ${params.DEPLOY_ENV}"
+            echo "Version: ${VERSION}"
+            echo "Backend: ${BACKEND_IMAGE}:${VERSION}"
+            echo "Frontend: ${FRONTEND_IMAGE}:${VERSION}"
+        }
+        failure {
+            echo '❌ Pipeline failed!'
+        }
+    }
+}
