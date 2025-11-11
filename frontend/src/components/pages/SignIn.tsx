@@ -1,3 +1,4 @@
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -6,12 +7,9 @@ import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 import { Lightbulb, Facebook, Mail } from "lucide-react";
 
-interface SignInProps {
-  onSignUpClick?: () => void;
-  onBackToHome?: () => void;
-}
+export function SignIn() {
+  const navigate = useNavigate();
 
-export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -37,14 +35,19 @@ export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
       }
 
       console.log("Sign in successful:", data);
-      alert("Login successful!");
-      // Handle successful sign in (e.g., redirect, store token, etc.)
+      
+      // Store user data
       if (data.data && data.data.id) {
         localStorage.setItem("userId", data.data.id.toString());
         localStorage.setItem("userEmail", data.data.email);
+        localStorage.setItem("userName", `${data.data.first_name} ${data.data.last_name}`);
       }
-      // For now, just show success. In production, you'd redirect to dashboard
-      // window.location.href = "/dashboard";
+      
+      alert("Login successful!");
+      
+      // Navigate to dashboard
+      navigate("/dashboard");
+
     } catch (err: any) {
       console.error("Sign in error:", err);
       alert(err.message || "Login failed. Please check your email and password.");
@@ -56,8 +59,8 @@ export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <button 
-            onClick={onBackToHome}
+          <Link 
+            to="/"
             className="inline-flex items-center gap-2 mx-auto hover:opacity-80 transition-opacity"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
@@ -66,7 +69,7 @@ export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
             <span className="bg-gradient-to-r from-orange-500 to-yellow-600 bg-clip-text text-transparent">
               Aloka
             </span>
-          </button>
+          </Link>
           <p className="text-gray-600 mt-2">Welcome back! Sign in to continue</p>
         </div>
 
@@ -160,13 +163,12 @@ export function SignIn({ onSignUpClick, onBackToHome }: SignInProps) {
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-center text-gray-600">
               Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={onSignUpClick}
+              <Link
+                to="/signup"
                 className="text-orange-600 hover:text-orange-700 transition-colors"
               >
                 Sign up for free
-              </button>
+              </Link>
             </div>
           </CardFooter>
         </Card>

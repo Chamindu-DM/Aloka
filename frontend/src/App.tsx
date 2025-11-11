@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Header } from "./components/landing-page/Header";
 import { Hero } from "./components/landing-page/Hero";
 import { HowItWorks } from "./components/landing-page/HowItWorks";
@@ -9,42 +9,35 @@ import { CTASection } from "./components/landing-page/CTASection";
 import { Footer } from "./components/landing-page/Footer";
 import { SignIn } from "./components/pages/SignIn";
 import { SignUp } from "./components/pages/SignUp";
+import { Dashboard } from "./components/pages/Dashboard";
 
-type Page = "home" | "signin" | "signup";
-
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>("home");
-
-  if (currentPage === "signin") {
-    return (
-      <SignIn
-        onSignUpClick={() => setCurrentPage("signup")}
-        onBackToHome={() => setCurrentPage("home")}
-      />
-    );
-  }
-
-  if (currentPage === "signup") {
-    return (
-      <SignUp
-        onSignInClick={() => setCurrentPage("signin")}
-        onBackToHome={() => setCurrentPage("home")}
-      />
-    );
-  }
-
+function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      <Header onSignInClick={() => setCurrentPage("signin")} />
+      <Header />
       <main>
-        <Hero onStartCampaignClick={() => setCurrentPage("signup")} />
+        <Hero />
         <HowItWorks />
         <FeaturedCauses />
         <TransparencyDashboard />
         <Testimonials />
-        <CTASection onGetStartedClick={() => setCurrentPage("signup")} />
+        <CTASection />
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   );
 }

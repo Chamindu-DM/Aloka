@@ -1,3 +1,4 @@
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -8,12 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Lightbulb, Facebook, Mail } from "lucide-react";
 import { useState } from "react";
 
-interface SignUpProps {
-  onSignInClick?: () => void;
-  onBackToHome?: () => void;
-}
-
-export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
+export function SignUp() {
+  const navigate = useNavigate();
   const [accountType, setAccountType] = useState("donor");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,9 +50,7 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
       console.log("Sign up successful:", data);
       alert("Account created successfully! Please sign in.");
       // Redirect to sign in
-      if (onSignInClick) {
-        onSignInClick();
-      }
+      navigate("/signin");
     } catch (err: any) {
       console.error("Signup error:", err);
       alert(err.message || "Sign up failed. Please try again.");
@@ -67,8 +62,8 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <button 
-            onClick={onBackToHome}
+          <Link 
+            to="/"
             className="inline-flex items-center gap-2 mx-auto hover:opacity-80 transition-opacity"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
@@ -77,7 +72,7 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
             <span className="bg-gradient-to-r from-orange-500 to-yellow-600 bg-clip-text text-transparent">
               Aloka
             </span>
-          </button>
+          </Link>
           <p className="text-gray-600 mt-2">Create an account to start making a difference</p>
         </div>
 
@@ -228,13 +223,12 @@ export function SignUp({ onSignInClick, onBackToHome }: SignUpProps) {
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-center text-gray-600">
               Already have an account?{" "}
-              <button
-                type="button"
-                onClick={onSignInClick}
+              <Link
+                to="/signin"
                 className="text-orange-600 hover:text-orange-700 transition-colors"
               >
                 Sign in
-              </button>
+              </Link>
             </div>
           </CardFooter>
         </Card>

@@ -108,7 +108,6 @@ pipeline {
             }
             steps {
                 echo "Deploying to ${params.DEPLOY_ENV}..."
-                // Add your deployment commands here
                 // Example: SSH to server and run docker-compose
             }
         }
