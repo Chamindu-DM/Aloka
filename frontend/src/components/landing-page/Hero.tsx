@@ -1,12 +1,9 @@
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { ArrowRight } from "lucide-react";
 
-interface HeroProps {
-  onStartCampaignClick?: () => void;
-}
-
-export function Hero({ onStartCampaignClick }: HeroProps) {
+export function Hero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-orange-50 to-white">
       <div className="container mx-auto px-4 py-20 lg:py-32">
@@ -28,13 +25,14 @@ export function Hero({ onStartCampaignClick }: HeroProps) {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg"
-                onClick={onStartCampaignClick}
-              >
-                Start a Campaign
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link to="/signup">
+                <Button 
+                  className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg"
+                >
+                  Start a Campaign
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
               <Button variant="outline" className="border-orange-300 text-orange-600 hover:bg-orange-50">
                 Explore Causes
               </Button>
