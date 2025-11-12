@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   Select,
   SelectContent,
@@ -16,7 +15,6 @@ import {
 } from "../ui/select";
 import {
   Search,
-  Filter,
   TrendingUp,
   Heart,
   Users,
@@ -25,7 +23,7 @@ import {
   Calendar,
   SlidersHorizontal,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 const mockCampaigns = [
   {
