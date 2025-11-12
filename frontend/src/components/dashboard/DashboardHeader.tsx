@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { Lightbulb, Search, Bell, User, LogOut, Settings, Plus } from "lucide-react";
+import { Lightbulb, Bell, User, LogOut, Settings, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
 
 interface DashboardHeaderProps {
   onStartCampaign?: () => void;
