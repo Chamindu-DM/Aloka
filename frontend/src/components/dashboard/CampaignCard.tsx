@@ -63,7 +63,7 @@ export function CampaignCard({
             {category}
           </Badge>
           {isFeatured && (
-            <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white border-0">
+            <Badge className="bg-linear-to-r from-orange-500 to-yellow-500 text-white border-0">
               Featured
             </Badge>
           )}
@@ -117,7 +117,7 @@ export function CampaignCard({
       
       <CardFooter className="p-5 pt-0 flex gap-2">
         <Button 
-          className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white"
+          className="flex-1 bg-linear-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white"
           onClick={(e) => {
             e.stopPropagation();
             onDonate?.(id);
