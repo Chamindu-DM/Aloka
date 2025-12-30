@@ -1,5 +1,6 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
-import { Lightbulb, Bell, User, LogOut, Settings, Plus } from "lucide-react";
+import { Lightbulb, Bell, User, LogOut, Settings, Plus, Heart, Target } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +17,19 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onStartCampaign, onLogout }: DashboardHeaderProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const userName = localStorage.getItem("userName") || "User";
+  const userEmail = localStorage.getItem("userEmail") || "user@email.com";
+  const initials = userName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/dashboard")}>
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
               <Lightbulb className="h-6 w-6 text-white" />
@@ -29,9 +39,24 @@ export function DashboardHeader({ onStartCampaign, onLogout }: DashboardHeaderPr
         </div>
         
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-gray-900 hover:text-orange-500 transition-colors">Discover</a>
-          <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors">My Campaigns</a>
-          <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors">My Donations</a>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className={`${isActive("/dashboard") ? "text-orange-500 font-medium" : "text-gray-600"} hover:text-orange-500 transition-colors`}
+          >
+            Discover
+          </button>
+          <button
+            onClick={() => navigate("/my-campaigns")}
+            className={`${isActive("/my-campaigns") ? "text-orange-500 font-medium" : "text-gray-600"} hover:text-orange-500 transition-colors`}
+          >
+            My Campaigns
+          </button>
+          <button
+            onClick={() => navigate("/my-donations")}
+            className={`${isActive("/my-donations") ? "text-orange-500 font-medium" : "text-gray-600"} hover:text-orange-500 transition-colors`}
+          >
+            My Donations
+          </button>
         </nav>
         
         <div className="flex items-center gap-4">
@@ -84,7 +109,7 @@ export function DashboardHeader({ onStartCampaign, onLogout }: DashboardHeaderPr
                 <Avatar>
                   <AvatarImage src="" />
                   <AvatarFallback className="bg-gradient-to-br from-orange-400 to-yellow-500 text-white">
-                    SK
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -92,11 +117,19 @@ export function DashboardHeader({ onStartCampaign, onLogout }: DashboardHeaderPr
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div>
-                  <p>Saman Kumara</p>
-                  <p className="text-gray-500 mt-1">samankumara@email.com</p>
+                  <p>{userName}</p>
+                  <p className="text-gray-500 mt-1">{userEmail}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate("/my-campaigns")}>
+                <Target className="mr-2 h-4 w-4" />
+                <span>My Campaigns</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/my-donations")}>
+                <Heart className="mr-2 h-4 w-4" />
+                <span>My Donations</span>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
