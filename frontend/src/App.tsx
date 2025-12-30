@@ -10,6 +10,8 @@ import { Footer } from "./components/landing-page/Footer";
 import { SignIn } from "./components/pages/SignIn";
 import { SignUp } from "./components/pages/SignUp";
 import { Dashboard } from "./components/pages/Dashboard";
+import { MyCampaigns } from "./components/pages/MyCampaigns";
+import { MyDonations } from "./components/pages/MyDonations";
 
 function HomePage() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/my-campaigns" element={<MyCampaigns />} />
+        <Route path="/my-donations" element={<MyDonations />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
