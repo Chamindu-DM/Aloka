@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "../dashboard/DashboardHeader";
 import { CampaignCard } from "../dashboard/CampaignCard";
+import { DonateModal } from "../modals/DonateModal";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Card, CardContent } from "../ui/card";
@@ -59,6 +60,8 @@ export function Dashboard() {
   const [showFilters, setShowFilters] = useState(false);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const [donateModalOpen, setDonateModalOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
 
   const userName = localStorage.getItem("userName") || "User";
 
@@ -94,6 +97,24 @@ export function Dashboard() {
       setLoading(false);
     }
   };
+
+  const handleDonate = (id: number) => {
+    const campaign = campaigns.find(c => c.id === id);
+    if (campaign) {
+      setSelectedCampaign(campaign);
+      setDonateModalOpen(true);
+    }
+  };
+
+  const handleDonationSuccess = () => {
+    // Refresh campaigns to show updated amounts
+    fetchCampaigns();
+    setTimeout(() => {
+      setDonateModalOpen(false);
+      setSelectedCampaign(null);
+    }, 2500);
+  };
+
   const firstName = userName.split(" ")[0];
 
   const handleLogout = () => {
@@ -315,7 +336,7 @@ export function Dashboard() {
                   <CampaignCard
                     key={campaign.id}
                     {...campaign}
-                    onDonate={(id) => console.log("Donate to:", id)}
+                    onDonate={handleDonate}
                     onViewDetails={(id) => console.log("View details:", id)}
                   />
                 ))}
@@ -399,6 +420,19 @@ export function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* Donate Modal */}
+      {selectedCampaign && (
+        <DonateModal
+          isOpen={donateModalOpen}
+          onClose={() => {
+            setDonateModalOpen(false);
+            setSelectedCampaign(null);
+          }}
+          campaign={selectedCampaign}
+          onSuccess={handleDonationSuccess}
+        />
+      )}
     </div>
   );
 }
