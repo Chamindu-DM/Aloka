@@ -18,14 +18,14 @@ const handleResponse = (res, status, message, data) => {
 // Create a new campaign
 export const createCampaign = async (req, res, next) => {
     try {
-        const { userId, title, description, image, goal, category, location, daysLeft, isUrgent, isFeatured, organizer } = req.body;
+        const { userId, title, description, image, goal, category, location, daysLeft, isUrgent, isFeatured, organizer, status } = req.body;
 
         if (!title || !goal || !category) {
             return handleResponse(res, 400, "Title, goal, and category are required", null);
         }
 
         const newCampaign = await createCampaignService(
-            userId, title, description, image, goal, category, location, daysLeft || 30, isUrgent || false, isFeatured || false, organizer
+            userId, title, description, image, goal, category, location, daysLeft || 30, isUrgent || false, isFeatured || false, organizer, status || 'active'
         );
 
         handleResponse(res, 201, "Campaign created successfully", newCampaign);

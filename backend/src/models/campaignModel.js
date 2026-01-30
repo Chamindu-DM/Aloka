@@ -1,12 +1,12 @@
 import pool from "../config/db.js";
 
 // Create a new campaign
-export const createCampaignService = async (userId, title, description, image, goal, category, location, daysLeft, isUrgent, isFeatured, organizer) => {
+export const createCampaignService = async (userId, title, description, image, goal, category, location, daysLeft, isUrgent, isFeatured, organizer, status = 'active') => {
     const result = await pool.query(
-        `INSERT INTO campaigns (user_id, title, description, image, goal, category, location, days_left, is_urgent, is_featured, organizer)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        `INSERT INTO campaigns (user_id, title, description, image, goal, category, location, days_left, is_urgent, is_featured, organizer, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
          RETURNING *`,
-        [userId, title, description, image, goal, category, location, daysLeft, isUrgent, isFeatured, organizer]
+        [userId, title, description, image, goal, category, location, daysLeft, isUrgent, isFeatured, organizer, status]
     );
     return result.rows[0];
 };

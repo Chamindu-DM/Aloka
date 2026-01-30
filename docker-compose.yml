@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: aloka-db
       POSTGRES_USER: postgres
     ports:
-      - "5433:5432"  # Host:Container
+      - "5434:5432"  # Host:Container
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

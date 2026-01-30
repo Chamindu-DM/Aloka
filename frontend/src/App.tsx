@@ -12,6 +12,7 @@ import { SignUp } from "./components/pages/SignUp";
 import { Dashboard } from "./components/pages/Dashboard";
 import { MyCampaigns } from "./components/pages/MyCampaigns";
 import { MyDonations } from "./components/pages/MyDonations";
+import { CreateCampaign } from "./components/pages/CreateCampaign";
 
 function HomePage() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/my-campaigns" element={<MyCampaigns />} />
         <Route path="/my-donations" element={<MyDonations />} />
+        <Route path="/campaigns/new" element={<CreateCampaign />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
