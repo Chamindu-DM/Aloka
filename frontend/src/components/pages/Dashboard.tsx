@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "../dashboard/DashboardHeader";
 import { CampaignCard } from "../dashboard/CampaignCard";
@@ -23,111 +23,23 @@ import {
   Calendar,
   SlidersHorizontal,
 } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
 
-const mockCampaigns = [
-  {
-    id: 1,
-    title: "Help Rebuild Rural Schools After Floods",
-    image: "https://images.unsplash.com/photo-1761604478724-13fe879468cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGVkdWNhdGlvbiUyMGNsYXNzcm9vbXxlbnwxfHx8fDE3NjI1NzgxMzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 850000,
-    goal: 1200000,
-    donors: 342,
-    category: "Education",
-    location: "Matara, Southern Province",
-    daysLeft: 28,
-    isFeatured: true,
-    organizer: "Education Trust Sri Lanka",
-  },
-  {
-    id: 2,
-    title: "Support Amaya's Heart Surgery",
-    image: "https://images.unsplash.com/photo-1613377512409-59c33c10c821?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwY2FyZSUyMGhvc3BpdGFsfGVufDF8fHx8MTc2MjU3ODEzOXww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 425000,
-    goal: 500000,
-    donors: 189,
-    category: "Medical",
-    location: "Colombo",
-    daysLeft: 12,
-    isUrgent: true,
-    organizer: "Amaya's Family",
-  },
-  {
-    id: 3,
-    title: "Community Well Project - Anuradhapura",
-    image: "https://images.unsplash.com/photo-1728038024967-69afb838f5ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21tdW5pdHklMjBidWlsZGluZyUyMGNvbnN0cnVjdGlvbnxlbnwxfHx8fDE3NjI1NzgxMzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 320000,
-    goal: 400000,
-    donors: 156,
-    category: "Community",
-    location: "Anuradhapura",
-    daysLeft: 45,
-    organizer: "Rural Development Foundation",
-  },
-  {
-    id: 4,
-    title: "Provide Meals for Underprivileged Children",
-    image: "https://images.unsplash.com/photo-1574309122960-34273ebda15e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYXBweSUyMHBlb3BsZSUyMGNlbGVicmF0aW5nfGVufDF8fHx8MTc2MjU3ODE0MHww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 680000,
-    goal: 750000,
-    donors: 421,
-    category: "Social",
-    location: "Kandy",
-    daysLeft: 20,
-    isFeatured: true,
-    organizer: "Hope for Children LK",
-  },
-  {
-    id: 5,
-    title: "Emergency Relief for Flood Victims",
-    image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXNhc3RlciUyMHJlbGllZnxlbnwxfHx8fDE3MzE1MDk5Mjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 1250000,
-    goal: 2000000,
-    donors: 634,
-    category: "Emergency",
-    location: "Galle",
-    daysLeft: 7,
-    isUrgent: true,
-    isFeatured: true,
-    organizer: "Red Cross Sri Lanka",
-  },
-  {
-    id: 6,
-    title: "Scholarship Fund for Rural Students",
-    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nfGVufDF8fHx8MTczMTUwOTkzMHww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 450000,
-    goal: 800000,
-    donors: 198,
-    category: "Education",
-    location: "Badulla",
-    daysLeft: 35,
-    organizer: "Future Leaders Foundation",
-  },
-  {
-    id: 7,
-    title: "Medical Equipment for Rural Clinic",
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwZXF1aXBtZW50fGVufDF8fHx8MTczMTUwOTkzMXww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 720000,
-    goal: 1000000,
-    donors: 289,
-    category: "Medical",
-    location: "Jaffna",
-    daysLeft: 25,
-    organizer: "Healthcare Access Initiative",
-  },
-  {
-    id: 8,
-    title: "Support Small Business Recovery",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFsbCUyMGJ1c2luZXNzfGVufDF8fHx8MTczMTUwOTkzMXww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 380000,
-    goal: 600000,
-    donors: 145,
-    category: "Economic",
-    location: "Negombo",
-    daysLeft: 40,
-    organizer: "Small Business Alliance",
-  },
-];
+const API_BASE_URL = "http://localhost:5001/api";
+
+interface Campaign {
+  id: number;
+  title: string;
+  image: string;
+  raised: number;
+  goal: number;
+  donors: number;
+  category: string;
+  location: string;
+  daysLeft: number;
+  isFeatured?: boolean;
+  isUrgent?: boolean;
+  organizer: string;
+}
 
 const categories = [
   { id: "all", label: "All Causes", icon: TrendingUp },
@@ -139,45 +51,49 @@ const categories = [
   { id: "economic", label: "Economic", icon: TrendingUp },
 ];
 
-const recentActivity = [
-  {
-    id: 1,
-    donor: "Anonymous",
-    amount: 10000,
-    campaign: "Help Rebuild Rural Schools",
-    time: "5 minutes ago",
-  },
-  {
-    id: 2,
-    donor: "Priya Fernando",
-    amount: 5000,
-    campaign: "Support Amaya's Heart Surgery",
-    time: "23 minutes ago",
-  },
-  {
-    id: 3,
-    donor: "Rajith Silva",
-    amount: 15000,
-    campaign: "Emergency Relief for Flood Victims",
-    time: "1 hour ago",
-  },
-  {
-    id: 4,
-    donor: "Anonymous",
-    amount: 25000,
-    campaign: "Provide Meals for Underprivileged Children",
-    time: "2 hours ago",
-  },
-];
-
 export function Dashboard() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const userName = localStorage.getItem("userName") || "User";
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/campaigns`);
+      const data = await response.json();
+      if (data.status === 200) {
+        const formattedCampaigns = data.data.map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          image: c.image,
+          raised: Number(c.raised),
+          goal: Number(c.goal),
+          donors: c.donors,
+          category: c.category.charAt(0).toUpperCase() + c.category.slice(1),
+          location: c.location,
+          daysLeft: c.days_left,
+          isFeatured: c.is_featured,
+          isUrgent: c.is_urgent,
+          organizer: c.organizer
+        }));
+        setCampaigns(formattedCampaigns);
+      }
+    } catch (error) {
+      console.error("Error fetching campaigns:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const firstName = userName.split(" ")[0];
 
   const handleLogout = () => {
@@ -187,7 +103,7 @@ export function Dashboard() {
     navigate("/");
   };
 
-  const filteredCampaigns = mockCampaigns.filter((campaign) => {
+  const filteredCampaigns = campaigns.filter((campaign) => {
     const matchesCategory = selectedCategory === "all" || 
       campaign.category.toLowerCase() === selectedCategory;
     const matchesSearch = campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -210,12 +126,19 @@ export function Dashboard() {
     }
   });
 
-  const formatCurrency = (amount: number) => {
-    return `LKR ${(amount / 1000).toFixed(0)}K`;
-  };
+  const totalRaised = campaigns.reduce((sum, c) => sum + c.raised, 0);
+  const totalDonors = campaigns.reduce((sum, c) => sum + c.donors, 0);
 
-  const totalRaised = mockCampaigns.reduce((sum, c) => sum + c.raised, 0);
-  const totalDonors = mockCampaigns.reduce((sum, c) => sum + c.donors, 0);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/30 to-white">
+        <DashboardHeader onLogout={handleLogout} />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <p className="text-gray-600">Loading campaigns...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/30 to-white">
@@ -249,7 +172,7 @@ export function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 mb-1">Active Campaigns</p>
-                  <h3>{mockCampaigns.length}</h3>
+                  <h3>{campaigns.length}</h3>
                 </div>
                 <Target className="h-10 w-10 text-orange-500" />
               </div>
@@ -412,35 +335,18 @@ export function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Recent Activity */}
-            <Card className="border-0 shadow-md">
+            {/* Recent Activity - Commented out since we need donation data from backend */}
+            {/* <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <h3 className="mb-4 flex items-center">
                   <TrendingUp className="h-5 w-5 mr-2 text-orange-500" />
                   Recent Activity
                 </h3>
                 <div className="space-y-4">
-                  {recentActivity.map((activity) => (
-                    <div key={activity.id} className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-orange-100 text-orange-600">
-                          {activity.donor[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">
-                          <span className="text-gray-900">{activity.donor}</span>
-                          {' '}donated{' '}
-                          <span className="text-orange-600">{formatCurrency(activity.amount)}</span>
-                        </p>
-                        <p className="text-sm text-gray-500 truncate">{activity.campaign}</p>
-                        <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-                      </div>
-                    </div>
-                  ))}
+                  Recent activity will be displayed here
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Urgent Campaigns */}
             <Card className="border-0 shadow-md bg-gradient-to-br from-red-50 to-orange-50">
@@ -450,7 +356,7 @@ export function Dashboard() {
                   Urgent Campaigns
                 </h3>
                 <div className="space-y-4">
-                  {mockCampaigns
+                  {campaigns
                     .filter((c) => c.isUrgent)
                     .slice(0, 3)
                     .map((campaign) => (

@@ -62,7 +62,7 @@ export function DashboardHeader({ onStartCampaign, onLogout }: DashboardHeaderPr
         <div className="flex items-center gap-4">
           <Button 
             className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg"
-            onClick={onStartCampaign}
+            onClick={() => onStartCampaign ? onStartCampaign() : navigate("/campaigns/new")}
           >
             <Plus className="h-4 w-4 mr-2" />
             Start Campaign

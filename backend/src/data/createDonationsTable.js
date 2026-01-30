@@ -10,7 +10,9 @@ const createDonationsTable = async () => {
         donor_name VARCHAR(100),
         is_anonymous BOOLEAN DEFAULT FALSE,
         message TEXT,
-        payment_status VARCHAR(20) DEFAULT 'completed',
+        receipt_url TEXT,
+        payment_method VARCHAR(50) DEFAULT 'manual',
+        payment_status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`;
     try {

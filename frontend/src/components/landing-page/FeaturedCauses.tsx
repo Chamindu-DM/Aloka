@@ -1,53 +1,69 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { Heart } from "lucide-react";
 
-const causes = [
-  {
-    id: 1,
-    title: "Help Rebuild Rural Schools After Floods",
-    image: "https://images.unsplash.com/photo-1761604478724-13fe879468cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGVkdWNhdGlvbiUyMGNsYXNzcm9vbXxlbnwxfHx8fDE3NjI1NzgxMzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 850000,
-    goal: 1200000,
-    donors: 342,
-    category: "Education"
-  },
-  {
-    id: 2,
-    title: "Support Amaya's Heart Surgery",
-    image: "https://images.unsplash.com/photo-1613377512409-59c33c10c821?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwY2FyZSUyMGhvc3BpdGFsfGVufDF8fHx8MTc2MjU3ODEzOXww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 425000,
-    goal: 500000,
-    donors: 189,
-    category: "Medical"
-  },
-  {
-    id: 3,
-    title: "Community Well Project - Anuradhapura",
-    image: "https://images.unsplash.com/photo-1728038024967-69afb838f5ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21tdW5pdHklMjBidWlsZGluZyUyMGNvbnN0cnVjdGlvbnxlbnwxfHx8fDE3NjI1NzgxMzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 320000,
-    goal: 400000,
-    donors: 156,
-    category: "Community"
-  },
-  {
-    id: 4,
-    title: "Provide Meals for Underprivileged Children",
-    image: "https://images.unsplash.com/photo-1574309122960-34273ebda15e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYXBweSUyMHBlb3BsZSUyMGNlbGVicmF0aW5nfGVufDF8fHx8MTc2MjU3ODE0MHww&ixlib=rb-4.1.0&q=80&w=1080",
-    raised: 680000,
-    goal: 750000,
-    donors: 421,
-    category: "Social"
-  }
-];
+interface Campaign {
+  id: number;
+  title: string;
+  image: string;
+  raised: number;
+  goal: number;
+  donors: number;
+  category: string;
+}
+
+const API_BASE_URL = "http://localhost:5001/api";
 
 function formatCurrency(amount: number) {
   return `LKR ${(amount / 1000).toFixed(0)}K`;
 }
 
 export function FeaturedCauses() {
+  const [causes, setCauses] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFeaturedCampaigns();
+  }, []);
+
+  const fetchFeaturedCampaigns = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/campaigns`);
+      const data = await response.json();
+      if (data.status === 200) {
+        // Get only featured campaigns or first 4 if no featured ones
+        const featured = data.data.filter((c: any) => c.is_featured).slice(0, 4);
+        const campaigns = featured.length > 0 ? featured : data.data.slice(0, 4);
+        setCauses(campaigns.map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          image: c.image,
+          raised: Number(c.raised),
+          goal: Number(c.goal),
+          donors: c.donors,
+          category: c.category.charAt(0).toUpperCase() + c.category.slice(1)
+        })));
+      }
+    } catch (error) {
+      console.error("Error fetching campaigns:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section id="explore" className="py-20 bg-gradient-to-b from-white to-orange-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Loading campaigns...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="explore" className="py-20 bg-gradient-to-b from-white to-orange-50">
       <div className="container mx-auto px-4">

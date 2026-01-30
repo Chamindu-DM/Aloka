@@ -20,15 +20,19 @@ const handleResponse = (res, status, message, data) => {
 // Create a new donation
 export const createDonation = async (req, res, next) => {
     try {
-        const { userId, campaignId, amount, donorName, isAnonymous, message } = req.body;
+        const { userId, campaignId, amount, donorName, isAnonymous, message, receiptUrl, paymentMethod } = req.body;
 
         if (!campaignId || !amount) {
             return handleResponse(res, 400, "Campaign ID and amount are required", null);
         }
 
+        if (amount < 100) {
+            return handleResponse(res, 400, "Minimum donation amount is LKR 100", null);
+        }
+
         // Create donation
         const newDonation = await createDonationService(
-            userId, campaignId, amount, donorName, isAnonymous || false, message
+            userId, campaignId, amount, donorName, isAnonymous || false, message, receiptUrl, paymentMethod || 'manual'
         );
 
         // Update campaign raised amount and donors count

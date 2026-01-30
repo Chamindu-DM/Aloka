@@ -1,12 +1,12 @@
 import pool from "../config/db.js";
 
 // Create a new donation
-export const createDonationService = async (userId, campaignId, amount, donorName, isAnonymous, message) => {
+export const createDonationService = async (userId, campaignId, amount, donorName, isAnonymous, message, receiptUrl, paymentMethod) => {
     const result = await pool.query(
-        `INSERT INTO donations (user_id, campaign_id, amount, donor_name, is_anonymous, message)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO donations (user_id, campaign_id, amount, donor_name, is_anonymous, message, receipt_url, payment_method, payment_status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING *`,
-        [userId, campaignId, amount, donorName, isAnonymous, message]
+        [userId, campaignId, amount, donorName, isAnonymous, message, receiptUrl, paymentMethod, receiptUrl ? 'pending' : 'completed']
     );
     return result.rows[0];
 };
