@@ -46,5 +46,20 @@ services:
       - backend
     restart: unless-stopped
 
+  # Jenkins CI/CD
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root
+    privileged: true
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+  jenkins_data:

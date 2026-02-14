@@ -25,3 +25,4 @@ docker-compose up --build
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+# Test automated deployment
