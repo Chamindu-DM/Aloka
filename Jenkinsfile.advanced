@@ -159,7 +159,11 @@ ENDSSH
     
     post {
         always {
-            sh 'docker logout'
+            script {
+                node {
+                    sh 'docker logout || true'
+                }
+            }
         }
         success {
             echo '✅ Pipeline completed successfully!'
