@@ -29,7 +29,7 @@ export function Hero() {
                 <Button 
                   className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white shadow-lg"
                 >
-                  Start a Campaign
+                  Chamindu
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
