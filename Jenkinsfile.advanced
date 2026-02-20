@@ -48,8 +48,10 @@ pipeline {
                 echo "Building frontend image for ${params.DEPLOY_ENV}..."
                 script {
                     dir('frontend') {
+                        // Set API URL based on environment
+                        def apiUrl = params.DEPLOY_ENV == 'production' ? "http://${EC2_HOST}:5001/api" : "http://localhost:5001/api"
                         sh """
-                            docker build -t ${FRONTEND_IMAGE}:${VERSION} .
+                            docker build --build-arg VITE_API_URL=${apiUrl} -t ${FRONTEND_IMAGE}:${VERSION} .
                             docker tag ${FRONTEND_IMAGE}:${VERSION} ${FRONTEND_IMAGE}:${params.DEPLOY_ENV}
                         """
                         if (params.DEPLOY_ENV == 'production') {
