@@ -7,6 +7,7 @@ import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 import { Heart, Upload, CheckCircle2, AlertCircle, CreditCard, Wallet } from "lucide-react";
+import { API_BASE_URL } from "@/config/api";
 
 const API_BASE_URL = "http://localhost:5001/api";
 

@@ -24,8 +24,7 @@ import {
   Calendar,
   SlidersHorizontal,
 } from "lucide-react";
-
-const API_BASE_URL = "http://localhost:5001/api";
+import { API_BASE_URL } from "@/config/api";
 
 interface Campaign {
   id: number;

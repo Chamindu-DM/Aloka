@@ -20,7 +20,7 @@ export function SignIn() {
     console.log("Attempting sign in for:", email);
 
     try {
-      const res = await fetch("http://localhost:5001/api/user/signin", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

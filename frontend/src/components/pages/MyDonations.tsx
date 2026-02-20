@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { API_BASE_URL } from "@/config/api";
 
 interface Donation {
   id: number;
@@ -44,8 +45,6 @@ interface DonationStats {
   total_amount: string;
   campaigns_supported: string;
 }
-
-const API_BASE_URL = "http://localhost:5001/api";
 
 export function MyDonations() {
   const navigate = useNavigate();

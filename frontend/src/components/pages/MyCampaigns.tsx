@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { API_BASE_URL } from "@/config/api";
 
 interface Campaign {
   id: number;
@@ -41,8 +42,6 @@ interface Campaign {
   status: string;
   created_at: string;
 }
-
-const API_BASE_URL = "http://localhost:5001/api";
 
 export function MyCampaigns() {
   const navigate = useNavigate();

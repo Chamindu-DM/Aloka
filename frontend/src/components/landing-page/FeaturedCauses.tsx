@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { Heart } from "lucide-react";
+import { API_BASE_URL } from "@/config/api";
 
 interface Campaign {
   id: number;
@@ -14,8 +15,6 @@ interface Campaign {
   donors: number;
   category: string;
 }
-
-const API_BASE_URL = "http://localhost:5001/api";
 
 function formatCurrency(amount: number) {
   return `LKR ${(amount / 1000).toFixed(0)}K`;
