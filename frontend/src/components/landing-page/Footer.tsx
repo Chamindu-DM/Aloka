@@ -70,7 +70,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500">
-            © 2025 Aloka. All rights reserved. Made by Chamindu
+            © 2025 Aloka. All rights reserved. Chamindu
           </p>
           
           <div className="flex items-center gap-6">
