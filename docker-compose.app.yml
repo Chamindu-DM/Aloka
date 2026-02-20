@@ -1,0 +1,50 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: aloka-db
+      POSTGRES_USER: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend API (using pre-built image from Docker Hub)
+  backend:
+    image: chamindudm/aloka-backend:latest
+    container_name: aloka-backend
+    ports:
+      - "5001:5001"
+    environment:
+      DB_USER: postgres
+      DB_HOST: db
+      DB_DATABASE: aloka-db
+      DB_PASSWORD: 1234
+      DB_DBPORT: 5432
+      PORT: 5001
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend (using pre-built image from Docker Hub)
+  frontend:
+    image: chamindudm/aloka-frontend:latest
+    container_name: aloka-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
